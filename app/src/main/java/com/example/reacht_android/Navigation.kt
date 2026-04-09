@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.reacht_android.ui.screens.Chats
+import com.example.reacht_android.ui.screens.CreateOffer
 import com.example.reacht_android.ui.screens.Screen
 import com.example.reacht_android.ui.screens.Feed
 import com.example.reacht_android.ui.screens.People
@@ -29,6 +30,9 @@ fun Navigation(navController: NavHostController) {
         }
         composable(Screen.Profile.route) {
             Profile(navController, viewModel)
+        }
+        composable(Screen.CreateOffer.route) {
+            CreateOffer(navController, viewModel)
         }
     }
 }
