@@ -56,14 +56,14 @@ fun OfferCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            //.padding(horizontal = 16.dp)
             .clickable { onOfferClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = LightGrey,
             contentColor = Color.White
         ),
-        // TODO: que es esto
+        // TODO: creo que esto se puede quitar
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         // TODO: por qué intrisic size

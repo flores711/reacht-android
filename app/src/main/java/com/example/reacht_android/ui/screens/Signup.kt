@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.reacht_android.AppViewModel
 import com.example.reacht_android.AuthState
@@ -95,9 +98,16 @@ fun Signup(navController: NavController, viewModel: AppViewModel) {
         Button(
             onClick = { viewModel.signup(emailInput, usernameInput, passwordInput) },
             colors = ButtonDefaults.buttonColors(containerColor = Blurple),
-            enabled = authState !is AuthState.Loading
+            enabled = authState !is AuthState.Loading,
+            shape = RoundedCornerShape(6.dp),
+            // TODO: Por qué el padding se pone así
+            // TODO: Buscar todos estos y quitarlos si no hacen falta
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
         ) {
-            Text("Sign Up")
+            Text(
+                text = "Sign Up",
+                fontSize = 16.sp
+            )
         }
 
         if (authState is AuthState.Error) {

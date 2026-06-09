@@ -5,7 +5,6 @@ sealed class Screen(val route: String) {
     object Signup: Screen("signup")
     object Feed: Screen("feed")
     object Chats: Screen("chats")
-    object People: Screen("people")
     object Profile: Screen("profile")
     object CreateOffer: Screen("create-offer")
     object OfferDetail: Screen("offer-detail")

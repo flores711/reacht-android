@@ -190,7 +190,7 @@ fun CreateOffer(navController: NavController, viewModel: AppViewModel) {
                 }
             },
             label = { Text("Target players") },
-            placeholder = { Text("min. 1 | max. 100") },
+            placeholder = { Text("min. 1  |  max. 100") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
