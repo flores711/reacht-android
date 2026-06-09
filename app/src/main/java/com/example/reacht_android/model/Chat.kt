@@ -1,5 +1,6 @@
 package com.example.reacht_android.model
 
-data class Game(
+data class Chat(
+    val chatId: Int,
     val name: String
 )

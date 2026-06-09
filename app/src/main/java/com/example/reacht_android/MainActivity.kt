@@ -1,10 +1,11 @@
 package com.example.reacht_android
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -13,11 +14,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.reacht_android.ui.screens.Screen
 import com.example.reacht_android.ui.theme.ReachtandroidTheme
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,13 +28,15 @@ class MainActivity : ComponentActivity() {
             ReachtandroidTheme(darkTheme = true) {
                 val navController = rememberNavController()
                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
+                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                val showBottomBar = currentRoute !in listOf(Screen.Login.route, Screen.Signup.route)
 
                 Scaffold(
                     bottomBar = {
-                        NavigationBar {
+                        if (showBottomBar) NavigationBar {
                             bottomNavigationItems.forEachIndexed { index, item ->
                                 NavigationBarItem(
-                                    selected = selectedItemIndex == index,  // Se muestra seleccionado si el indice del item seleccionado es el mismo que el del actual
+                                    selected = selectedItemIndex == index,
                                     onClick = {
                                         selectedItemIndex = index
                                         navController.navigate(item.route)
@@ -46,8 +51,10 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                ) {
-                    Navigation(navController)
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        Navigation(navController)
+                    }
                 }
             }
         }

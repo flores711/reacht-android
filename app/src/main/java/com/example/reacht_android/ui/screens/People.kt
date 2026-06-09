@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.reacht_android.ViewModel
+import com.example.reacht_android.AppViewModel
 
 @Composable
-fun People(navController: NavController, viewModel: ViewModel) {
+fun People(navController: NavController, viewModel: AppViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
