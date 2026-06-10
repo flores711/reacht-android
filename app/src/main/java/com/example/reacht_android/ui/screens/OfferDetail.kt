@@ -221,6 +221,7 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
             )
         }
 
+        // Mensaje de error de 3seg como en feed
         AnimatedVisibility(
             visible = joinOfferState is JoinOfferState.Error,
             enter = fadeIn(),

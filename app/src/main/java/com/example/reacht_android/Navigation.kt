@@ -13,6 +13,7 @@ import com.example.reacht_android.ui.screens.Profile
 import com.example.reacht_android.ui.screens.Screen
 import com.example.reacht_android.ui.screens.OfferDetail
 import com.example.reacht_android.ui.screens.SingleChat
+import com.example.reacht_android.ui.screens.ServerSettings
 import com.example.reacht_android.ui.screens.Signup
 
 @Composable
@@ -35,7 +36,7 @@ fun Navigation(navController: NavHostController) {
         composable(Screen.Chats.route) {
             Chats(navController, viewModel)
         }
-composable(Screen.Profile.route) {
+        composable(Screen.Profile.route) {
             Profile(navController, viewModel)
         }
         composable(Screen.CreateOffer.route) {
@@ -46,6 +47,9 @@ composable(Screen.Profile.route) {
         }
         composable(Screen.SingleChat.route) {
             SingleChat(navController, viewModel)
+        }
+        composable(Screen.ServerSettings.route) {
+            ServerSettings(navController, viewModel)
         }
     }
 }

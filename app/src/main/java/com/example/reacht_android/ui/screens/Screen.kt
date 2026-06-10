@@ -9,4 +9,5 @@ sealed class Screen(val route: String) {
     object CreateOffer: Screen("create-offer")
     object OfferDetail: Screen("offer-detail")
     object SingleChat: Screen("single-chat")
+    object ServerSettings: Screen("server-settings")
 }

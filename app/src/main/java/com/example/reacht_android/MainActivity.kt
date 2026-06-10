@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-                val showBottomBar = currentRoute !in listOf(Screen.Login.route, Screen.Signup.route)
+                val showBottomBar = currentRoute !in listOf(Screen.Login.route, Screen.Signup.route, Screen.ServerSettings.route)
 
                 Scaffold(
                     bottomBar = {

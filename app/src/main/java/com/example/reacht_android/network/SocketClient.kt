@@ -1,6 +1,7 @@
 package com.example.reacht_android.network
 
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
@@ -9,9 +10,6 @@ import java.util.concurrent.TimeUnit
 
 object SocketClient {
 
-    // En el emulador de Android, 10.0.2.2 equivale al localhost del PC
-    // En un móvil real habría que poner la IP local del PC en la red WiFi
-    private const val HOST = "10.0.2.2"
     private const val PORT = 4444
 
     private var socket: Socket? = null
@@ -26,20 +24,20 @@ object SocketClient {
     // para que enterChat() los recoja en tiempo real
     val newChatMessageQueue = LinkedBlockingQueue<String>()
 
-    fun connect() {
-        socket = Socket(HOST, PORT)
+    fun connect(serverIp: String) {
+        socket = Socket(serverIp, PORT)
         reader = BufferedReader(InputStreamReader(socket!!.getInputStream()))
         writer = PrintWriter(socket!!.getOutputStream(), true)
         startReaderThread()
     }
 
     fun disconnect() {
-        if (socket != null) {
-            socket!!.close()
-            socket = null
-            reader = null
-            writer = null
-        }
+        socket?.close()
+        socket = null
+        reader = null
+        writer = null
+        responseQueue.clear()
+        newChatMessageQueue.clear()
     }
 
     fun isConnected(): Boolean {
@@ -67,14 +65,17 @@ object SocketClient {
     // Hilo de fondo que lee continuamente todo lo que manda el servidor
     private fun startReaderThread() {
         val listeningThread = Thread {
-            while (socket != null && !socket!!.isClosed) {
-                val line = reader!!.readLine()
-                if (line == null) break
-                if (line.contains("\"NEW_CHAT_MESSAGE\"")) {
-                    newChatMessageQueue.put(line)
-                } else {
-                    responseQueue.put(line)
+            try {
+                while (socket != null && !socket!!.isClosed) {
+                    val line = reader!!.readLine() ?: break
+                    if (line.contains("\"NEW_CHAT_MESSAGE\"")) {
+                        newChatMessageQueue.put(line)
+                    } else {
+                        responseQueue.put(line)
+                    }
                 }
+            } catch (e: IOException) {
+                println("SocketClient reader thread connection lost — ${e.message}")
             }
         }
         listeningThread.isDaemon = true

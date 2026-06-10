@@ -99,12 +99,17 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
                 )
             }
         } else {
+            val isCreator = currentOffer!!.creatorId == viewModel.userId
             OfferCard(
                 offer = currentOffer!!,
                 onOfferClick = {},
                 onOfferJoin = {},
-                onOfferLeave = { viewModel.leaveOffer(currentOffer!!.offerId) },
-                isJoined = true
+                isJoined = true,
+                isCreator = isCreator,
+                onOfferLeave = {
+                    if (isCreator) viewModel.deleteOffer(currentOffer!!.offerId)
+                    else viewModel.leaveOffer(currentOffer!!.offerId)
+                }
             )
         }
 

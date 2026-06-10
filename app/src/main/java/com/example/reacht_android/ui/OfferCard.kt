@@ -46,6 +46,7 @@ fun OfferCard(
     onOfferClick: () -> Unit,
     onOfferJoin: () -> Unit,
     isJoined: Boolean = false,
+    isCreator: Boolean = false,
     onOfferLeave: () -> Unit = {}
 ) {
     val slots = minOf(offer.targetPlayers, 10)
@@ -130,7 +131,7 @@ fun OfferCard(
                         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            text = if (isJoined) "Leave" else "Join",
+                            text = if (isCreator) "Delete" else if (isJoined) "Leave" else "Join",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White

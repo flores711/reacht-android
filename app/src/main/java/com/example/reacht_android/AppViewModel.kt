@@ -1,11 +1,13 @@
 package com.example.reacht_android
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.reacht_android.model.Chat
 import com.example.reacht_android.model.ChatMessage
 import com.example.reacht_android.model.Offer
 import com.example.reacht_android.model.Videogame
+import com.example.reacht_android.network.ServerPreferences
 import com.example.reacht_android.network.SocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.IOException
 import java.net.SocketTimeoutException
 
 sealed class AuthState {
@@ -42,11 +45,41 @@ sealed class CreateOfferState {
     data class Error(val message: String) : CreateOfferState()
 }
 
-class AppViewModel : ViewModel() {
+// AndroidViewModel para poder mandarlo como context a SharedPreferences
+class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
+        val ip = ServerPreferences.getIp(application)
+        if (ip != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    SocketClient.connect(ip)
+                } catch (e: IOException) {
+                    println("AppViewModel init: could not connect to server — ${e.message}")
+                }
+            }
+        }
+    }
+
+    fun getServerIp(): String = ServerPreferences.getIp(getApplication()) ?: ""
+
+    fun saveServerIp(ip: String) {
+        ServerPreferences.saveIp(getApplication(), ip)
         viewModelScope.launch(Dispatchers.IO) {
-            SocketClient.connect()
+            SocketClient.disconnect()
+            try {
+                SocketClient.connect(ip)
+            } catch (e: IOException) {
+                println("AppViewModel saveServerIp: could not connect to $ip — ${e.message}")
+            }
+        }
+    }
+
+    // Esto se ejecuta cuando se destruye la instancia del ViewModel, al cerrar la app
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch(Dispatchers.IO) {
+            SocketClient.disconnect()
         }
     }
 
@@ -154,6 +187,26 @@ class AppViewModel : ViewModel() {
                 val responseStr = SocketClient.send(request.toString())
                 val response = JSONObject(responseStr)
                 if (response.getString("action") == "LEAVE_OFFER_SUCCESS") {
+                    _currentOffer.value = null
+                }
+            } catch (e: Exception) {
+                // silent fail — user can retry
+            }
+        }
+    }
+
+    fun deleteOffer(offerId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = JSONObject().apply {
+                    put("action", "DELETE_OFFER")
+                    put("data", JSONObject().apply {
+                        put("offer_id", offerId)
+                    })
+                }
+                val responseStr = SocketClient.send(request.toString())
+                val response = JSONObject(responseStr)
+                if (response.getString("action") == "DELETE_OFFER_SUCCESS") {
                     _currentOffer.value = null
                 }
             } catch (e: Exception) {
