@@ -34,8 +34,10 @@ import androidx.compose.ui.unit.sp
 import com.example.reacht_android.model.Offer
 import com.example.reacht_android.model.Videogame
 import com.example.reacht_android.ui.theme.Blurple
+import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.LightGrey
 import com.example.reacht_android.ui.theme.OffWhite
+import com.example.reacht_android.ui.theme.VividRed
 import kotlin.math.roundToInt
 
 @Composable
@@ -60,7 +62,7 @@ fun OfferCard(
             .clickable { onOfferClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = LightGrey,
+            containerColor = MediumGrey,
             contentColor = Color.White
         ),
         // TODO: creo que esto se puede quitar
@@ -107,7 +109,7 @@ fun OfferCard(
                                         .clip(CircleShape)
                                         .background(
                                             if (index < filledSlots) Blurple
-                                            else Color(0xFF3A3A3A)
+                                            else LightGrey
                                         )
                                 )
                             }
@@ -122,7 +124,7 @@ fun OfferCard(
                     Button(
                         onClick = if (isJoined) onOfferLeave else onOfferJoin,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isJoined) Color(0xFFD20000) else Blurple
+                            containerColor = if (isJoined) VividRed else Blurple
                         ),
                         shape = RoundedCornerShape(6.dp),
                         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)

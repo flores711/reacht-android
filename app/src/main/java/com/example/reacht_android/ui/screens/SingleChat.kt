@@ -15,10 +15,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -38,13 +40,16 @@ import androidx.navigation.NavController
 import com.example.reacht_android.AppViewModel
 import com.example.reacht_android.ui.theme.Blurple
 import com.example.reacht_android.ui.theme.DarkGrey
-import com.example.reacht_android.ui.theme.LightGrey
+import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.OffWhite
+import com.example.reacht_android.ui.theme.VividRed
+import com.example.reacht_android.ui.theme.reachtTextFieldColors
 
 @Composable
 fun SingleChat(navController: NavController, viewModel: AppViewModel) {
     val chat = viewModel.selectedChat ?: return
     val messages by viewModel.chatMessages.collectAsState()
+    val leaveChatSuccess by viewModel.leaveChatSuccess.collectAsState()
     var inputText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
@@ -52,7 +57,15 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
         viewModel.enterChat(chat.chatId)
     }
 
-    // Se ejecuta cuando salimos de esta pantalla, y llamamos a exitchat
+    LaunchedEffect(leaveChatSuccess) {
+        if (leaveChatSuccess) {
+            viewModel.resetLeaveChatSuccess()
+            navController.navigate(Screen.Chats.route) {
+                popUpTo(Screen.Chats.route) { inclusive = true }
+            }
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
             viewModel.exitChat()
@@ -75,14 +88,14 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(LightGrey)
-                .padding(horizontal = 16.dp, vertical = 14.dp),
+                .background(MediumGrey)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "←",
-                color = Color.White,
-                fontSize = 20.sp,
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White,
                 modifier = Modifier
                     .clickable { navController.popBackStack() }
                     .padding(end = 12.dp)
@@ -90,9 +103,18 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
             Text(
                 text = chat.name,
                 color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
             )
+            Button(
+                onClick = { viewModel.leaveChat(chat.chatId) },
+                colors = ButtonDefaults.buttonColors(containerColor = VividRed),
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+            ) {
+                Text("Leave", color = Color.White)
+            }
         }
 
         // Lista de mensajes
@@ -114,7 +136,7 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
                     Column(
                         modifier = Modifier
                             .background(
-                                color = if (isMe) Blurple else LightGrey,
+                                color = if (isMe) Blurple else MediumGrey,
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -142,7 +164,7 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(LightGrey)
+                .background(MediumGrey)
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -152,12 +174,7 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
                 modifier = Modifier.weight(1f),
                 placeholder = { Text("Message...", color = OffWhite) },
                 singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Blurple,
-                    unfocusedBorderColor = Color(0xFF3A3A3A),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                )
+                colors = reachtTextFieldColors()
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(

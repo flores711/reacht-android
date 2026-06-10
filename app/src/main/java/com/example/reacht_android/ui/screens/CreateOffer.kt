@@ -23,8 +23,10 @@ import com.example.reacht_android.model.Chat
 import com.example.reacht_android.model.Videogame
 import com.example.reacht_android.ui.theme.Blurple
 import com.example.reacht_android.ui.theme.DarkGrey
-import com.example.reacht_android.ui.theme.LightGrey
+import com.example.reacht_android.ui.theme.ErrorRed
+import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.OffWhite
+import com.example.reacht_android.ui.theme.reachtTextFieldColors
 
 @Composable
 fun CreateOffer(navController: NavController, viewModel: AppViewModel) {
@@ -109,20 +111,13 @@ fun CreateOffer(navController: NavController, viewModel: AppViewModel) {
             label = { Text("Videogame") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Blurple,
-                unfocusedBorderColor = Color(0xFF3A3A3A),
-                focusedLabelColor = Blurple,
-                unfocusedLabelColor = OffWhite,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            )
+            colors = reachtTextFieldColors()
         )
         if (filteredGames.isNotEmpty() && selectedVideogame == null) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = LightGrey)
+                colors = CardDefaults.cardColors(containerColor = MediumGrey)
             ) {
                 Column {
                     filteredGames.forEach { game ->
@@ -160,14 +155,7 @@ fun CreateOffer(navController: NavController, viewModel: AppViewModel) {
             label = { Text("Description") },
             modifier = Modifier.fillMaxWidth(),
             minLines = 3,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Blurple,
-                unfocusedBorderColor = Color(0xFF3A3A3A),
-                focusedLabelColor = Blurple,
-                unfocusedLabelColor = OffWhite,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            )
+            colors = reachtTextFieldColors()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -190,18 +178,12 @@ fun CreateOffer(navController: NavController, viewModel: AppViewModel) {
                 }
             },
             label = { Text("Target players") },
-            placeholder = { Text("min. 1  |  max. 100") },
+            placeholder = { Text("min. 2  |  max. 100") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            // Para que en android salga solo el teclado numérico y no el normal
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Blurple,
-                unfocusedBorderColor = Color(0xFF3A3A3A),
-                focusedLabelColor = Blurple,
-                unfocusedLabelColor = OffWhite,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            )
+            colors = reachtTextFieldColors()
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -231,7 +213,7 @@ fun CreateOffer(navController: NavController, viewModel: AppViewModel) {
         if (createOfferState is CreateOfferState.Error) {
             Text(
                 text = (createOfferState as CreateOfferState.Error).message,
-                color = Color(0xFFE57373),
+                color = ErrorRed,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(top = 8.dp)
             )

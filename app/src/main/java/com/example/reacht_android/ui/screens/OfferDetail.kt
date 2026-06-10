@@ -1,5 +1,8 @@
 package com.example.reacht_android.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,14 +37,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 import com.example.reacht_android.AppViewModel
 import com.example.reacht_android.JoinOfferState
 import com.example.reacht_android.model.Chat
 import com.example.reacht_android.ui.theme.Blurple
 import com.example.reacht_android.ui.theme.DarkGrey
+import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.LightGrey
 import com.example.reacht_android.ui.theme.OffWhite
 import kotlin.math.roundToInt
@@ -59,6 +65,10 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
                 viewModel.selectChat(Chat(chatId = state.chatId, name = state.chatName))
                 viewModel.resetJoinOfferState()
                 navController.navigate(Screen.SingleChat.route)
+            }
+            is JoinOfferState.Error -> {
+                delay(3000)
+                viewModel.resetJoinOfferState()
             }
             else -> {}
         }
@@ -85,7 +95,7 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightGrey)
+                    .background(MediumGrey)
                     .padding(horizontal = 26.dp, vertical = 20.dp)
             ) {
                 Column {
@@ -125,7 +135,7 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = LightGrey)
+                    colors = CardDefaults.cardColors(containerColor = MediumGrey)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
@@ -151,7 +161,7 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
                                             .clip(CircleShape)
                                             .background(
                                                 if (index < filledSlots) Blurple
-                                                else Color(0xFF3A3A3A)
+                                                else LightGrey
                                             )
                                     )
                                 }
@@ -171,7 +181,7 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = LightGrey)
+                        colors = CardDefaults.cardColors(containerColor = MediumGrey)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
@@ -209,6 +219,28 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(vertical = 4.dp)
             )
+        }
+
+        AnimatedVisibility(
+            visible = joinOfferState is JoinOfferState.Error,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 100.dp, start = 24.dp, end = 24.dp)
+        ) {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = MediumGrey),
+            ) {
+                Text(
+                    text = (joinOfferState as? JoinOfferState.Error)?.message ?: "",
+                    color = OffWhite,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+            }
         }
     }
 }

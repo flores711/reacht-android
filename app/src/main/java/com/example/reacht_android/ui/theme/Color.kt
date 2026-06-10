@@ -13,7 +13,11 @@ val Pink40 = Color(0xFF7D5260)
 
 // Custom dark theme
 val DarkGrey = Color(0xFF121212)
-val LightGrey = Color(0xFF1E1E1E)
-val BrightGrey = Color(0xFF424242)
+val MediumGrey = Color(0xFF1E1E1E)
+val LightGrey = Color(0xFF3A3A3A)
+val BrightGrey = Color(0xFF2F2F2F)
 val Blurple = Color(0xFF5865F2)
+val VividRed = Color(0xFFD20000)
+val ErrorRed = Color(0xFFE57373)
+val SuccessGreen = Color(0xFF4CAF50)
 val OffWhite = Color(0xFFD1D1D1)

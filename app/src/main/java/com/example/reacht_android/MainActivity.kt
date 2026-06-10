@@ -23,7 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.reacht_android.ui.screens.Screen
 import com.example.reacht_android.ui.theme.Blurple
-import com.example.reacht_android.ui.theme.LightGrey
+import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.OffWhite
 import com.example.reacht_android.ui.theme.ReachtandroidTheme
 
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         if (showBottomBar) NavigationBar(
-                            containerColor = LightGrey
+                            containerColor = MediumGrey
                         ) {
                             bottomNavigationItems.forEachIndexed { index, item ->
                                 NavigationBarItem(

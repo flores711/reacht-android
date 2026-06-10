@@ -92,6 +92,9 @@ class AppViewModel : ViewModel() {
     private val _createOfferState = MutableStateFlow<CreateOfferState>(CreateOfferState.Idle)
     val createOfferState = _createOfferState.asStateFlow()
 
+    private val _leaveChatSuccess = MutableStateFlow(false)
+    val leaveChatSuccess = _leaveChatSuccess.asStateFlow()
+
     fun selectOffer(offer: Offer) {
         _selectedOffer.value = offer
     }
@@ -306,6 +309,33 @@ class AppViewModel : ViewModel() {
         chatListenerJob = null
         // Vaciamaos la lista para usarla limpia para el siguiente chat
         _chatMessages.value = emptyList()
+    }
+
+    fun leaveChat(chatId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = JSONObject().apply {
+                    put("action", "LEAVE_CHAT")
+                    put("data", JSONObject().apply {
+                        put("chat_id", chatId)
+                        put("user_id", userId)
+                    })
+                }
+                val responseStr = SocketClient.send(request.toString())
+                val response = JSONObject(responseStr)
+                if (response.getString("action") == "LEAVE_CHAT_SUCCESS") {
+                    _chats.value = _chats.value.filter { it.chatId != chatId }
+                    exitChat()
+                    _leaveChatSuccess.value = true
+                }
+            } catch (e: Exception) {
+                // silent fail
+            }
+        }
+    }
+
+    fun resetLeaveChatSuccess() {
+        _leaveChatSuccess.value = false
     }
 
     fun loadUserData() {

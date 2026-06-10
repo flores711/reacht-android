@@ -36,6 +36,7 @@ import com.example.reacht_android.AuthState
 import com.example.reacht_android.ui.theme.Blurple
 import com.example.reacht_android.ui.theme.DarkGrey
 import com.example.reacht_android.ui.theme.OffWhite
+import com.example.reacht_android.ui.theme.reachtTextFieldColors
 
 @Composable
 fun Signup(navController: NavController, viewModel: AppViewModel) {
@@ -72,7 +73,8 @@ fun Signup(navController: NavController, viewModel: AppViewModel) {
             onValueChange = { emailInput = it },
             label = { Text("Email") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = reachtTextFieldColors()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -81,7 +83,8 @@ fun Signup(navController: NavController, viewModel: AppViewModel) {
             onValueChange = { usernameInput = it },
             label = { Text("Username") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = reachtTextFieldColors()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -91,7 +94,8 @@ fun Signup(navController: NavController, viewModel: AppViewModel) {
             label = { Text("Password") },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = reachtTextFieldColors()
         )
         Spacer(modifier = Modifier.height(24.dp))
 

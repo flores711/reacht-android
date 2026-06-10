@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -36,8 +35,11 @@ import com.example.reacht_android.UpdateUserState
 import com.example.reacht_android.ui.OfferCard
 import com.example.reacht_android.ui.theme.Blurple
 import com.example.reacht_android.ui.theme.DarkGrey
-import com.example.reacht_android.ui.theme.LightGrey
+import com.example.reacht_android.ui.theme.ErrorRed
+import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.OffWhite
+import com.example.reacht_android.ui.theme.reachtTextFieldColors
+import com.example.reacht_android.ui.theme.SuccessGreen
 
 @Composable
 fun Profile(navController: NavController, viewModel: AppViewModel) {
@@ -87,7 +89,7 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = LightGrey)
+                colors = CardDefaults.cardColors(containerColor = MediumGrey)
             ) {
                 Text(
                     text = "No active offer",
@@ -120,7 +122,7 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = LightGrey)
+            colors = CardDefaults.cardColors(containerColor = MediumGrey)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 OutlinedTextField(
@@ -129,14 +131,7 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
                     label = { Text("Username") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Blurple,
-                        unfocusedBorderColor = Color(0xFF3A3A3A),
-                        focusedLabelColor = Blurple,
-                        unfocusedLabelColor = OffWhite,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    )
+                    colors = reachtTextFieldColors()
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -145,14 +140,7 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
                     label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Blurple,
-                        unfocusedBorderColor = Color(0xFF3A3A3A),
-                        focusedLabelColor = Blurple,
-                        unfocusedLabelColor = OffWhite,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    )
+                    colors = reachtTextFieldColors()
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -162,14 +150,7 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Blurple,
-                        unfocusedBorderColor = Color(0xFF3A3A3A),
-                        focusedLabelColor = Blurple,
-                        unfocusedLabelColor = OffWhite,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    )
+                    colors = reachtTextFieldColors()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
@@ -194,13 +175,13 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
                 when (val state = updateUserState) {
                     is UpdateUserState.Success -> Text(
                         text = "Saved!",
-                        color = Color(0xFF4CAF50),
+                        color = SuccessGreen,
                         fontSize = 13.sp,
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     is UpdateUserState.Error -> Text(
                         text = state.message,
-                        color = Color(0xFFE57373),
+                        color = ErrorRed,
                         fontSize = 13.sp,
                         modifier = Modifier.padding(top = 6.dp)
                     )

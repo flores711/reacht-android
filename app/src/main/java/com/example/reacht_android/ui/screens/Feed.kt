@@ -1,5 +1,8 @@
 package com.example.reacht_android.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -21,8 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,7 +36,6 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -61,8 +62,10 @@ import com.example.reacht_android.ui.OfferCard
 import com.example.reacht_android.ui.theme.Blurple
 import com.example.reacht_android.ui.theme.BrightGrey
 import com.example.reacht_android.ui.theme.DarkGrey
-import com.example.reacht_android.ui.theme.LightGrey
+import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.OffWhite
+import com.example.reacht_android.ui.theme.reachtTextFieldColors
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,6 +107,10 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                 viewModel.resetJoinOfferState()
                 navController.navigate(Screen.SingleChat.route)
             }
+            is JoinOfferState.Error -> {
+                delay(3000)
+                viewModel.resetJoinOfferState()
+            }
             else -> {}
         }
     }
@@ -118,7 +125,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightGrey)
+                    .background(MediumGrey)
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 // Fila de cuadro búsqueda videojuego y boton para expandir filtros
@@ -137,14 +144,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                         },
                         label = { Text("Videogame") },
                         singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Blurple,
-                            unfocusedBorderColor = Color(0xFF3A3A3A),
-                            focusedLabelColor = Blurple,
-                            unfocusedLabelColor = OffWhite,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        )
+                        colors = reachtTextFieldColors()
                     )
                     Spacer(Modifier.width(8.dp))
                     // Botón de buscar
@@ -188,7 +188,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF2A2A2A))
+                        colors = CardDefaults.cardColors(containerColor = BrightGrey)
                     ) {
                         Column {
                             filteredGames.forEach { game ->
@@ -240,16 +240,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                                 modifier = Modifier
                                     .menuAnchor()
                                     .fillMaxWidth(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Blurple,
-                                    unfocusedBorderColor = Color(0xFF3A3A3A),
-                                    focusedLabelColor = Blurple,
-                                    unfocusedLabelColor = OffWhite,
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = OffWhite,
-                                    focusedTrailingIconColor = Blurple,
-                                    unfocusedTrailingIconColor = OffWhite
-                                )
+                                colors = reachtTextFieldColors()
                             )
                             // Y esto es realmente lo que se despliega
                             ExposedDropdownMenu(
@@ -296,17 +287,11 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                                             minCurrentPlayers = newValue
                                         }
                                     },
+                                    label = { Text("Min") },
                                     singleLine = true,
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.fillMaxWidth(),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = Blurple,
-                                        unfocusedBorderColor = Color(0xFF3A3A3A),
-                                        focusedLabelColor = Blurple,
-                                        unfocusedLabelColor = OffWhite,
-                                        focusedTextColor = Color.White,
-                                        unfocusedTextColor = Color.White
-                                    )
+                                    colors = reachtTextFieldColors()
                                 )
                             }
                             Spacer(Modifier.width(12.dp))
@@ -326,17 +311,11 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                                             maxTargetPlayers = newValue
                                         }
                                     },
+                                    label = { Text("Max") },
                                     singleLine = true,
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.fillMaxWidth(),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = Blurple,
-                                        unfocusedBorderColor = Color(0xFF3A3A3A),
-                                        focusedLabelColor = Blurple,
-                                        unfocusedLabelColor = OffWhite,
-                                        focusedTextColor = Color.White,
-                                        unfocusedTextColor = Color.White
-                                    )
+                                    colors = reachtTextFieldColors()
                                 )
                             }
                         }
@@ -379,7 +358,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
             modifier = Modifier
                 .padding(bottom = 12.dp)
                 .align(Alignment.BottomCenter)
-                .border(4.dp, Blurple, shape = RoundedCornerShape(12.dp)),
+                .border(3.dp, Blurple, shape = RoundedCornerShape(12.dp)),
             shape = RoundedCornerShape(10.dp),
             containerColor = BrightGrey,
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 16.dp)
@@ -390,6 +369,29 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                 contentDescription = "Create Offer",
                 tint = Color.White,
             )
+        }
+
+        // Para que tenga animación fadein y fadeout en vez de con un if normal
+        AnimatedVisibility(
+            visible = joinOfferState is JoinOfferState.Error,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
+        ) {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = DarkGrey),
+            ) {
+                Text(
+                    text = (joinOfferState as? JoinOfferState.Error)?.message ?: "",
+                    color = OffWhite,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                )
+            }
         }
     }
 }
