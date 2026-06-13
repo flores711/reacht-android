@@ -47,42 +47,6 @@ sealed class CreateOfferState {
 
 // AndroidViewModel para poder mandarlo como context a SharedPreferences
 class AppViewModel(application: Application) : AndroidViewModel(application) {
-
-    init {
-        val ip = ServerPreferences.getIp(application)
-        if (ip != null) {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    SocketClient.connect(ip)
-                } catch (e: IOException) {
-                    println("AppViewModel init: could not connect to server — ${e.message}")
-                }
-            }
-        }
-    }
-
-    fun getServerIp(): String = ServerPreferences.getIp(getApplication()) ?: ""
-
-    fun saveServerIp(ip: String) {
-        ServerPreferences.saveIp(getApplication(), ip)
-        viewModelScope.launch(Dispatchers.IO) {
-            SocketClient.disconnect()
-            try {
-                SocketClient.connect(ip)
-            } catch (e: IOException) {
-                println("AppViewModel saveServerIp: could not connect to $ip — ${e.message}")
-            }
-        }
-    }
-
-    // Esto se ejecuta cuando se destruye la instancia del ViewModel, al cerrar la app
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.launch(Dispatchers.IO) {
-            SocketClient.disconnect()
-        }
-    }
-
     var userId: Int = -1
     var username: String = ""
 
@@ -127,6 +91,46 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _leaveChatSuccess = MutableStateFlow(false)
     val leaveChatSuccess = _leaveChatSuccess.asStateFlow()
+
+
+    // TODO: Debería capturar excepciones aquí?
+    init {
+        val ip = ServerPreferences.getIp(application)
+        if (ip != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    SocketClient.connect(ip)
+                } catch (e: IOException) {
+                    println("AppViewModel init: could not connect to server: ${e.message}")
+                }
+            }
+        }
+    }
+
+    fun getServerIp(): String {
+        return ServerPreferences.getIp(getApplication()) ?: ""
+    }
+
+    fun saveServerIp(ip: String) {
+        ServerPreferences.saveIp(getApplication(), ip)
+        viewModelScope.launch(Dispatchers.IO) {
+            SocketClient.disconnect()
+            try {
+                SocketClient.connect(ip)
+            } catch (e: IOException) {
+                println("AppViewModel saveServerIp: could not connect to $ip — ${e.message}")
+            }
+        }
+    }
+
+    // Esto se ejecuta cuando se destruye la instancia del ViewModel, al cerrar la app
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch(Dispatchers.IO) {
+            SocketClient.disconnect()
+        }
+    }
+
 
     fun selectOffer(offer: Offer) {
         _selectedOffer.value = offer
@@ -629,6 +633,37 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun logOut() {
-        // TODO
+        chatListenerJob?.cancel()   // Por si acaso
+        chatListenerJob = null
+
+        userId = -1
+        username = ""
+        selectedChat = null
+
+        _authState.value = AuthState.Idle
+        _offers.value = emptyList()
+        _selectedOffer.value = null
+        _currentOffer.value = null
+        _chats.value = emptyList()
+        _chatMessages.value = emptyList()
+        _userEmail.value = ""
+        _videogames.value = emptyList()
+        _joinOfferState.value = JoinOfferState.Idle
+        _updateUserState.value = UpdateUserState.Idle
+        _createOfferState.value = CreateOfferState.Idle
+        _leaveChatSuccess.value = false
+        _isLoading.value = false
+
+        val ip = ServerPreferences.getIp(getApplication())
+        viewModelScope.launch(Dispatchers.IO) {
+            SocketClient.disconnect()
+            if (ip != null) {
+                try {
+                    SocketClient.connect(ip)
+                } catch (e: IOException) {
+                    println("logOut: could not reconnect — ${e.message}")
+                }
+            }
+        }
     }
 }

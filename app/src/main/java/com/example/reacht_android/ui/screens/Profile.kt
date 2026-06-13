@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -193,20 +194,22 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
                     )
                     else -> {}
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(26.dp))
+                // Botón Log out
                 Button(
                     onClick = {
                         viewModel.logOut()
                         navController.navigate(Screen.Login.route)
                     },
-                    modifier = Modifier.padding(horizontal = 12.dp),
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                     colors = ButtonDefaults.buttonColors(containerColor = VividRed),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
                 ) {
                     Text(
                         text = "Log out",
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(vertical = 2.dp)
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        color = Color.White
                     )
                 }
             }

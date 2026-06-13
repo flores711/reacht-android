@@ -120,7 +120,6 @@ fun Login(navController: NavController, viewModel: AppViewModel) {
             colors = ButtonDefaults.buttonColors(containerColor = Blurple),
             enabled = authState !is AuthState.Loading,
             shape = RoundedCornerShape(6.dp),
-            // TODO: Por qué el padding se pone así
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
         ) {
             Text(
