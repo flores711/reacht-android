@@ -140,6 +140,39 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         _joinOfferState.value = JoinOfferState.Idle
     }
 
+    fun createOffer(description: String, targetPlayers: Int, videogameId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = JSONObject().apply {
+                    put("action", "CREATE_OFFER")
+                    put("data", JSONObject().apply {
+                        put("description", description)
+                        put("targetPlayersCount", targetPlayers)
+                        put("creator", JSONObject().apply {
+                            put("id", userId)
+                        })
+                        put("videogame", JSONObject().apply {
+                            put("id", videogameId)
+                        })
+                    })
+                }
+                val responseStr = SocketClient.send(request.toString())
+                val response = JSONObject(responseStr)
+                if (response.getString("action") == "CREATE_OFFER_SUCCESS") {
+                    val data = response.getJSONObject("data")
+                    val chatId = data.getInt("chat_id")
+                    val chatName = data.getString("chat_name")
+                    _createOfferState.value = CreateOfferState.Success(chatId, chatName)
+                } else {
+                    val message = response.getJSONObject("data").optString("message", "Failed to create offer")
+                    _createOfferState.value = CreateOfferState.Error(message)
+                }
+            } catch (e: Exception) {
+                _createOfferState.value = CreateOfferState.Error("Connection error: ${e.message}")
+            }
+        }
+    }
+
     fun joinOffer(offerId: Int) {
         // Cualquier función de red debe estar en un hilo aparte
         // Si no se bloquea/congela la aplicación hasta que llegue respuesta, propio jetpack compose lo prohíbe
@@ -190,7 +223,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _currentOffer.value = null
                 }
             } catch (e: Exception) {
-                // silent fail — user can retry
             }
         }
     }
@@ -210,7 +242,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _currentOffer.value = null
                 }
             } catch (e: Exception) {
-                // silent fail — user can retry
             }
         }
     }
@@ -243,7 +274,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     "GET_CURRENT_OFFER_NOT_FOUND" -> _currentOffer.value = null
                 }
             } catch (e: Exception) {
-                // _currentOffer stays unchanged
             } finally {
                 _isLoading.value = false
             }
@@ -272,7 +302,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _chats.value = chatList
                 }
             } catch (e: Exception) {
-                // _chats stays unchanged
             } finally {
                 _isLoading.value = false
             }
@@ -309,7 +338,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _chatMessages.value = list
                 }
             } catch (e: Exception) {
-                // _chatMessages stays empty
             }
         }
 
@@ -332,7 +360,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     )
                     _chatMessages.value += newMessage
                 } catch (e: Exception) {
-                    // mensaje malformado, ignorar
                 }
             }
         }
@@ -351,7 +378,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 SocketClient.send(request.toString())
             } catch (e: Exception) {
-                // silent fail
             }
         }
     }
@@ -382,7 +408,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _leaveChatSuccess.value = true
                 }
             } catch (e: Exception) {
-                // silent fail
             }
         }
     }
@@ -406,7 +431,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _userEmail.value = response.getJSONObject("data").getString("email")
                 }
             } catch (e: Exception) {
-                // _userEmail stays unchanged
             }
         }
     }
@@ -465,40 +489,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _videogames.value = list
                 }
             } catch (e: Exception) {
-                // _videogames stays unchanged
-            }
-        }
-    }
-
-    fun createOffer(description: String, targetPlayers: Int, videogameId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val request = JSONObject().apply {
-                    put("action", "CREATE_OFFER")
-                    put("data", JSONObject().apply {
-                        put("description", description)
-                        put("targetPlayersCount", targetPlayers)
-                        put("creator", JSONObject().apply {
-                            put("id", userId)
-                        })
-                        put("videogame", JSONObject().apply {
-                            put("id", videogameId)
-                        })
-                    })
-                }
-                val responseStr = SocketClient.send(request.toString())
-                val response = JSONObject(responseStr)
-                if (response.getString("action") == "CREATE_OFFER_SUCCESS") {
-                    val data = response.getJSONObject("data")
-                    val chatId = data.getInt("chat_id")
-                    val chatName = data.getString("chat_name")
-                    _createOfferState.value = CreateOfferState.Success(chatId, chatName)
-                } else {
-                    val message = response.getJSONObject("data").optString("message", "Failed to create offer")
-                    _createOfferState.value = CreateOfferState.Error(message)
-                }
-            } catch (e: Exception) {
-                _createOfferState.value = CreateOfferState.Error("Connection error: ${e.message}")
             }
         }
     }
@@ -632,10 +622,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _offers.value = offers
                 }
             } catch (e: Exception) {
-                // _offers se queda sin cambiar si falla
             } finally {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun logOut() {
+        // TODO
     }
 }

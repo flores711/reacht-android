@@ -40,6 +40,7 @@ import com.example.reacht_android.ui.theme.MediumGrey
 import com.example.reacht_android.ui.theme.OffWhite
 import com.example.reacht_android.ui.theme.reachtTextFieldColors
 import com.example.reacht_android.ui.theme.SuccessGreen
+import com.example.reacht_android.ui.theme.VividRed
 
 @Composable
 fun Profile(navController: NavController, viewModel: AppViewModel) {
@@ -191,6 +192,22 @@ fun Profile(navController: NavController, viewModel: AppViewModel) {
                         modifier = Modifier.padding(top = 6.dp)
                     )
                     else -> {}
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        viewModel.logOut()
+                        navController.navigate(Screen.Login.route)
+                    },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = VividRed),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "Log out",
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    )
                 }
             }
         }

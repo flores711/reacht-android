@@ -55,7 +55,7 @@ object SocketClient {
         // no se puede hacer otra.
         // Sólo se hace para que el hilo de escucha meta las respuestas que no son mensajes de chat
         // Podría ser una variable simple, pero esta clase nos da thread-safe y la función de espera
-        val response = responseQueue.poll(10, TimeUnit.SECONDS)
+        val response = responseQueue.poll(5, TimeUnit.SECONDS)
         if (response != null) {
             return response
         }
