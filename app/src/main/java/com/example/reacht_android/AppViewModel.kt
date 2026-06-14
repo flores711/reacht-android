@@ -124,11 +124,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Esto se ejecuta cuando se destruye la instancia del ViewModel, al cerrar la app
+    // Ya esto no necesita hilo secundario porque no bloquea nada, la app se ha cerrado
+    // Y si intentamos enviarlo en hilo secundario del viewmodel no funcionará porque viewModelScope ya no existe cuando llega aquí
     override fun onCleared() {
         super.onCleared()
-        viewModelScope.launch(Dispatchers.IO) {
-            SocketClient.disconnect()
-        }
+        SocketClient.disconnect()
     }
 
 
