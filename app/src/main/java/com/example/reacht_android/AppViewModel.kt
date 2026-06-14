@@ -101,7 +101,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 try {
                     SocketClient.connect(ip)
                 } catch (e: IOException) {
-                    println("AppViewModel init: could not connect to server: ${e.message}")
+                    System.err.println("AppViewModel init: could not connect to server: ${e.message}")
                 }
             }
         }
@@ -118,7 +118,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 SocketClient.connect(ip)
             } catch (e: IOException) {
-                println("AppViewModel saveServerIp: could not connect to $ip — ${e.message}")
+                System.err.println("AppViewModel saveServerIp: could not connect to $ip — ${e.message}")
             }
         }
     }
@@ -171,7 +171,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     val message = response.getJSONObject("data").optString("message", "Failed to create offer")
                     _createOfferState.value = CreateOfferState.Error(message)
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - createOffer() invalid data format received from server: ${e.message}")
+                _createOfferState.value = CreateOfferState.Error("Received an invalid response from the server")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - createOffer() error: ${e.message}")
                 _createOfferState.value = CreateOfferState.Error("Connection error: ${e.message}")
             }
         }
@@ -205,7 +209,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         _joinOfferState.value = JoinOfferState.Error(message)
                     }
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - joinOffer() invalid data format received from server: ${e.message}")
+                _joinOfferState.value = JoinOfferState.Error("Received an invalid response from the server")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - joinOffer() error: ${e.message}")
                 _joinOfferState.value = JoinOfferState.Error("Connection error: ${e.message}")
             }
         }
@@ -226,7 +234,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 if (response.getString("action") == "LEAVE_OFFER_SUCCESS") {
                     _currentOffer.value = null
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - leaveOffer() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - leaveOffer() error: ${e.message}")
             }
         }
     }
@@ -245,7 +256,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 if (response.getString("action") == "DELETE_OFFER_SUCCESS") {
                     _currentOffer.value = null
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - deleteOffer() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - deleteOffer() error: ${e.message}")
             }
         }
     }
@@ -277,7 +291,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     }
                     "GET_CURRENT_OFFER_NOT_FOUND" -> _currentOffer.value = null
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - loadCurrentOffer() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - loadCurrentOffer() error: ${e.message}")
             } finally {
                 _isLoading.value = false
             }
@@ -305,7 +322,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     }
                     _chats.value = chatList
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - loadChats() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - loadChats() error: ${e.message}")
             } finally {
                 _isLoading.value = false
             }
@@ -341,7 +361,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     // Actualizamos variable del viewmodel con la lista ya llena
                     _chatMessages.value = list
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - enterChat() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - enterChat() error: ${e.message}")
             }
         }
 
@@ -363,7 +386,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         userUsername = data.getString("user_username")
                     )
                     _chatMessages.value += newMessage
+                } catch (e: JSONException) {
+                    System.err.println("AppViewModel - enterChat() invalid data format received from server: ${e.message}")
                 } catch (e: Exception) {
+                    System.err.println("AppViewModel - enterChat() error: ${e.message}")
                 }
             }
         }
@@ -381,7 +407,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     })
                 }
                 SocketClient.send(request.toString())
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - sendMessage() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - sendMessage() error: ${e.message}")
             }
         }
     }
@@ -411,7 +440,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     exitChat()
                     _leaveChatSuccess.value = true
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - leaveChat() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - leaveChat() error: ${e.message}")
             }
         }
     }
@@ -434,7 +466,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 if (response.getString("action") == "GET_USER_DATA_SUCCESS") {
                     _userEmail.value = response.getJSONObject("data").getString("email")
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - loadUserData() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - loadUserData() error: ${e.message}")
             }
         }
     }
@@ -461,7 +496,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     val message = response.getJSONObject("data").optString("message", "Update failed")
                     _updateUserState.value = UpdateUserState.Error(message)
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - updateUser() invalid data format received from server: ${e.message}")
+                _updateUserState.value = UpdateUserState.Error("Received an invalid response from the server")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - updateUser() error: ${e.message}")
                 _updateUserState.value = UpdateUserState.Error("Connection error: ${e.message}")
             }
         }
@@ -492,7 +531,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     }
                     _videogames.value = list
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - loadVideogames() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - loadVideogames() error: ${e.message}")
             }
         }
     }
@@ -536,9 +578,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
+            // TODO: Dónde salta esta excepción???
             } catch (e: SocketTimeoutException) {
                 _authState.value = AuthState.Error("The server did not respond, try again later")
             } catch (e: JSONException) {
+                System.err.println("AppViewModel - login() invalid data format received from server: ${e.message}")
                 _authState.value = AuthState.Error("Received an invalid response from the server")
             } catch (e: Exception) {
                 _authState.value = AuthState.Error("Connection error: ${e.message}")
@@ -575,6 +619,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             } catch (e: SocketTimeoutException) {
                 _authState.value = AuthState.Error("The server did not respond, try again later")
             } catch (e: JSONException) {
+                System.err.println("AppViewModel - signup() invalid data format received from server: ${e.message}")
                 _authState.value = AuthState.Error("Received an invalid response from the server")
             } catch (e: Exception) {
                 _authState.value = AuthState.Error("Connection error: ${e.message}")
@@ -625,7 +670,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     }
                     _offers.value = offers
                 }
+            } catch (e: JSONException) {
+                System.err.println("AppViewModel - searchOffers() invalid data format received from server: ${e.message}")
             } catch (e: Exception) {
+                System.err.println("AppViewModel - searchOffers() error: ${e.message}")
             } finally {
                 _isLoading.value = false
             }
@@ -661,7 +709,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 try {
                     SocketClient.connect(ip)
                 } catch (e: IOException) {
-                    println("logOut: could not reconnect — ${e.message}")
+                    System.err.println("logOut: could not reconnect — ${e.message}")
                 }
             }
         }

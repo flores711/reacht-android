@@ -51,8 +51,7 @@ object SocketClient {
         }
         // No espera la respuesta directa del servidor, la respuesta la espera y recibe el hilo de escucha,
         // la mete en la cola y este método lo que espera es que haya algo en la cola para cogerlo
-        // Y no puede haber dos seguidas muy rápido, porque hasta que no se recibe la respuesta de una y acaba el método,
-        // no se puede hacer otra.
+        // Hasta que no se recibe la respuesta de una petición y acaba el método, no se puede hacer otra.
         // Sólo se hace para que el hilo de escucha meta las respuestas que no son mensajes de chat
         // Podría ser una variable simple, pero esta clase nos da thread-safe y la función de espera
         val response = responseQueue.poll(5, TimeUnit.SECONDS)
@@ -75,7 +74,11 @@ object SocketClient {
                     }
                 }
             } catch (e: IOException) {
-                println("SocketClient reader thread connection lost — ${e.message}")
+                System.err.println("SocketClient reader thread connection lost: ${e.message}")
+            } catch (e: InterruptedException) {
+                Thread.currentThread().interrupt()
+            } catch (e: Exception) {
+                System.err.println("Error on SocketClient reader thread: ${e.message}")
             }
         }
         listeningThread.isDaemon = true
