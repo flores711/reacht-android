@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.net.SocketTimeoutException
 
 sealed class AuthState {
     object Idle : AuthState()
@@ -93,7 +92,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val leaveChatSuccess = _leaveChatSuccess.asStateFlow()
 
 
-    // TODO: Debería capturar excepciones aquí?
     init {
         val ip = ServerPreferences.getIp(application)
         if (ip != null) {
@@ -196,17 +194,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     })
                 }
                 val responseStr = SocketClient.send(request.toString())
-                val response = JSONObject(responseStr)
-                when (response.getString("action")) {
-                    "JOIN_OFFER_SUCCESS" -> {
-                        val data = response.getJSONObject("data")
-                        val chatId = data.getInt("chat_id")
-                        val chatName = data.getString("chat_name")
-                        _joinOfferState.value = JoinOfferState.Success(chatId, chatName)
-                    }
-                    else -> {
-                        val message = response.getJSONObject("data").optString("message", "Failed to join offer")
-                        _joinOfferState.value = JoinOfferState.Error(message)
+                if (responseStr.isEmpty()) {
+                    _joinOfferState.value = JoinOfferState.Error("The server did not respond, try again later")
+                } else {
+                    val response = JSONObject(responseStr)
+                    when (response.getString("action")) {
+                        "JOIN_OFFER_SUCCESS" -> {
+                            val data = response.getJSONObject("data")
+                            val chatId = data.getInt("chat_id")
+                            val chatName = data.getString("chat_name")
+                            _joinOfferState.value = JoinOfferState.Success(chatId, chatName)
+                        }
+                        else -> {
+                            val message = response.getJSONObject("data").optString("message", "Failed to join offer")
+                            _joinOfferState.value = JoinOfferState.Error(message)
+                        }
                     }
                 }
             } catch (e: JSONException) {
@@ -487,14 +489,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     })
                 }
                 val responseStr = SocketClient.send(request.toString())
-                val response = JSONObject(responseStr)
-                if (response.getString("action") == "UPDATE_USER_SUCCESS") {
-                    username = newUsername
-                    _updateUserState.value = UpdateUserState.Success
+                if (responseStr.isEmpty()) {
+                    _updateUserState.value = UpdateUserState.Error("The server did not respond, try again later")
                 } else {
-                    // TODO: Por qué opt string y la respuesta por defecto aquí
-                    val message = response.getJSONObject("data").optString("message", "Update failed")
-                    _updateUserState.value = UpdateUserState.Error(message)
+                    val response = JSONObject(responseStr)
+                    if (response.getString("action") == "UPDATE_USER_SUCCESS") {
+                        username = newUsername
+                        _updateUserState.value = UpdateUserState.Success
+                    } else {
+                        val message = response.getJSONObject("data").optString("message", "Update failed")
+                        _updateUserState.value = UpdateUserState.Error(message)
+                    }
                 }
             } catch (e: JSONException) {
                 System.err.println("AppViewModel - updateUser() invalid data format received from server: ${e.message}")
@@ -578,9 +583,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-            // TODO: Dónde salta esta excepción???
-            } catch (e: SocketTimeoutException) {
-                _authState.value = AuthState.Error("The server did not respond, try again later")
             } catch (e: JSONException) {
                 System.err.println("AppViewModel - login() invalid data format received from server: ${e.message}")
                 _authState.value = AuthState.Error("Received an invalid response from the server")
@@ -616,8 +618,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-            } catch (e: SocketTimeoutException) {
-                _authState.value = AuthState.Error("The server did not respond, try again later")
             } catch (e: JSONException) {
                 System.err.println("AppViewModel - signup() invalid data format received from server: ${e.message}")
                 _authState.value = AuthState.Error("Received an invalid response from the server")

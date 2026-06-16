@@ -14,7 +14,6 @@ data class BottomNavigationItem(
     val defaultIcon: ImageVector,
     val selectedIcon: ImageVector,
     val hasNews: Boolean? = null,
-    // val notificationCount: Int? = null
 )
 
 val bottomNavigationItems = listOf(

@@ -67,6 +67,7 @@ fun OfferDetail(navController: NavController, viewModel: AppViewModel) {
                 navController.navigate(Screen.SingleChat.route)
             }
             is JoinOfferState.Error -> {
+                // Para que el mensaje de error se muestre 3 segundos y luego desaparezca (reset state)
                 delay(3000)
                 viewModel.resetJoinOfferState()
             }

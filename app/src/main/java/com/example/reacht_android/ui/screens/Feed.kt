@@ -108,6 +108,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                 navController.navigate(Screen.SingleChat.route)
             }
             is JoinOfferState.Error -> {
+                // Para que el mensaje de error se muestre 3 segundos y luego desaparezca (reset state)
                 delay(3000)
                 viewModel.resetJoinOfferState()
             }
@@ -128,7 +129,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                     .background(MediumGrey)
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                // Fila de cuadro búsqueda videojuego y boton para expandir filtros
+                // Fila de textfield videojuego, botón buscar y boton para expandir filtros
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -158,8 +159,6 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                             )
                         },
                         modifier = Modifier
-                            // TODO: Por qué se pone el color y round corners junto en background
-                            // En OfferCard por ejemplo está en shape = RoundedCornerShape(6.dp)
                             .background(Blurple, RoundedCornerShape(8.dp))
                             .size(54.dp)
                     ) {
@@ -233,6 +232,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
                                 value = selectedCategory ?: "All categories",
                                 onValueChange = {},
                                 readOnly = true,
+                                // El botón de flechita arriba o abajo para desplegar/colapsar
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoriesExpanded)
                                 },
@@ -352,7 +352,7 @@ fun Feed(navController: NavController, viewModel: AppViewModel) {
             }
         }
 
-        // Botón de crear oferta abajo a la derecha
+        // Botón de crear oferta abajo en el centro
         FloatingActionButton(
             onClick = { navController.navigate(Screen.CreateOffer.route) },
             modifier = Modifier

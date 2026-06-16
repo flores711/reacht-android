@@ -51,7 +51,7 @@ fun Login(navController: NavController, viewModel: AppViewModel) {
     var passwordInput by remember { mutableStateOf("") }
     val authState by viewModel.authState.collectAsState()
 
-    // Se ejecuta sólo cuando la key (authState) cambia.
+    // Se ejecuta sólo cuando la key (authState) cambia
     LaunchedEffect(authState) {
         if (authState is AuthState.LoginSuccess) {
             navController.navigate(Screen.Feed.route) {
@@ -80,75 +80,75 @@ fun Login(navController: NavController, viewModel: AppViewModel) {
         }
 
         Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "reacht",
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 48.sp,
-            color = Blurple
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = usernameInput,
-            onValueChange = { usernameInput = it },
-            label = { Text("Username") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            colors = reachtTextFieldColors()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = passwordInput,
-            onValueChange = { passwordInput = it },
-            label = { Text("Password") },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            colors = reachtTextFieldColors()
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = { viewModel.login(usernameInput, passwordInput) },
-            colors = ButtonDefaults.buttonColors(containerColor = Blurple),
-            enabled = authState !is AuthState.Loading,
-            shape = RoundedCornerShape(6.dp),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Log In",
-                fontSize = 16.sp
+                text = "reacht",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 48.sp,
+                color = Blurple
             )
-        }
+            Spacer(modifier = Modifier.height(32.dp))
 
-        if (authState is AuthState.Error) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = (authState as AuthState.Error).message,
-                color = Color.Red,
-                textAlign = TextAlign.Center
+            OutlinedTextField(
+                value = usernameInput,
+                onValueChange = { usernameInput = it },
+                label = { Text("Username") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                colors = reachtTextFieldColors()
             )
-        }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Row {
-            Text("Don't have an account? ", color = OffWhite)
-            Text(
-                text = "Sign up",
-                color = Blurple,
-                modifier = Modifier.clickable {
-                    viewModel.resetAuthState()
-                    navController.navigate(Screen.Signup.route)
-                }
+            OutlinedTextField(
+                value = passwordInput,
+                onValueChange = { passwordInput = it },
+                label = { Text("Password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = reachtTextFieldColors()
             )
-        }
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { viewModel.login(usernameInput, passwordInput) },
+                colors = ButtonDefaults.buttonColors(containerColor = Blurple),
+                enabled = authState !is AuthState.Loading,
+                shape = RoundedCornerShape(6.dp),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = "Log In",
+                    fontSize = 16.sp
+                )
+            }
+
+            if (authState is AuthState.Error) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = (authState as AuthState.Error).message,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Row {
+                Text("Don't have an account? ", color = OffWhite)
+                Text(
+                    text = "Sign up",
+                    color = Blurple,
+                    modifier = Modifier.clickable {
+                        viewModel.resetAuthState()
+                        navController.navigate(Screen.Signup.route)
+                    }
+                )
+            }
         }
     }
 }

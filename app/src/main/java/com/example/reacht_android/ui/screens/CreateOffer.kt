@@ -172,7 +172,7 @@ fun CreateOffer(navController: NavController, viewModel: AppViewModel) {
             value = targetPlayers,
             onValueChange = { newValue ->
                 val newValueInt = newValue.toIntOrNull()
-                // Dejamos si esta vacio, por ej para cambiar de número de 5 a 20 (tiene que borrar todo primero)ç
+                // Dejamos si está vacío, por ej para cambiar de número de 5 a 20 (tiene que borrar todo primero)
                 if (newValue.isEmpty() || (newValueInt != null && newValueInt <= 100)) {
                     targetPlayers = newValue
                 }

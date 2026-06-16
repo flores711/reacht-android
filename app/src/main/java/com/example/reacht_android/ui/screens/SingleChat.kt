@@ -119,7 +119,7 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
 
         // Lista de mensajes
         LazyColumn(
-            state = listState,  // TODO: Esto es el scroll verdad?
+            state = listState,  // El estado del scroll
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 12.dp),
@@ -141,7 +141,6 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .padding(horizontal = 12.dp, vertical = 8.dp)
-                            // No puedo poner algún maxWidth normal, para que pueda ocupar menos o hasta 0.75, en vez de siempre 0.75?
                             .fillMaxWidth(0.75f)
                     ) {
                         // Si no soy yo mostramos el username
@@ -183,9 +182,9 @@ fun SingleChat(navController: NavController, viewModel: AppViewModel) {
             Button(
                 onClick = {
                     if (inputText.isNotBlank()) {
-                        // Se envía a servidor - BD y servidor envía en broadcast a todos, nosotros incluidos
-                        // Lo recibiremos por hilo de escucha del servidor que meterá los NEW_CHAT_MESSAGE en cola de mensajes
-                        // Que leeremos de la cola en hilo lector de dentro de enterChat() del VM
+                        // Se envía a servidor -> registra en BD y servidor envía en broadcast a todos, nosotros incluidos
+                        // Lo recibiremos por hilo de escucha de SocketClient que meterá los NEW_CHAT_MESSAGE en cola de mensajes
+                        // Cola que leeremos en hilo lector de dentro de enterChat() del VM
                         // Se actualizará la lista de mensajes del VM, lo leeremos en esta clase y lo mostraremos
                         viewModel.sendMessage(chat.chatId, inputText.trim())
                         inputText = ""

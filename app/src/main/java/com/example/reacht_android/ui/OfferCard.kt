@@ -49,27 +49,27 @@ fun OfferCard(
     isCreator: Boolean = false,
     onOfferLeave: () -> Unit = {}
 ) {
+    // Slots máximo 10
     val slots = minOf(offer.targetPlayers, 10)
+    // Si hay menos de 10 jugadores, rellenamos el mismo num slots que num jugadores
     val filledSlots = if (offer.targetPlayers <= 10) {
         offer.currentPlayers
-    } else {
+    } else {    // Si no, dividimos uno entre otro y multiplicamos por slots (por 10) y cogemos el entero, representará el porcentaje de jugadores activos vs buscados
         (offer.currentPlayers.toFloat() / offer.targetPlayers * slots).roundToInt()
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            //.padding(horizontal = 16.dp)
             .clickable { onOfferClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MediumGrey,
             contentColor = Color.White
         ),
-        // TODO: creo que esto se puede quitar
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        // TODO: por qué intrisic size
+        // Intrinsic size para que el box morado sepa hasta dónde coger con fillMaxHeight()
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
             // Ralla morada de la izquierda
             Box(

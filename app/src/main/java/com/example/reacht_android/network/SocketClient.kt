@@ -44,16 +44,20 @@ object SocketClient {
         return socket != null && socket!!.isConnected && !socket!!.isClosed
     }
 
-    // Envía un JSON al servidor y espera la respuesta (máximo 10 segundos)
+    // Envía un JSON al servidor y espera la respuesta (máximo 5 segundos)
+    /* No espera la respuesta directa del servidor, la respuesta la espera y recibe el hilo de escucha,
+    la mete en la cola y este método lo que espera es que haya algo en la cola para cogerlo
+    Hasta que no se recibe la respuesta de una petición y acaba el método, no se puede hacer otra.
+    Sólo se hace para que el hilo de escucha meta las respuestas que no son mensajes de chat.
+    No podría mandar dos peticiones, y coger la respuesta de la 2a para la primera
+    porque manda una petición, y hasta que no llega la respuesta o pasan 5 segundos, no mandaría la segunda
+    Con synchronized asegura que solo una petición está en vuelo a la vez, aunque varias corrutinas lo intenten */
+    @Synchronized
     fun send(json: String): String {
         if (writer != null) {
             writer!!.println(json)
         }
-        // No espera la respuesta directa del servidor, la respuesta la espera y recibe el hilo de escucha,
-        // la mete en la cola y este método lo que espera es que haya algo en la cola para cogerlo
-        // Hasta que no se recibe la respuesta de una petición y acaba el método, no se puede hacer otra.
-        // Sólo se hace para que el hilo de escucha meta las respuestas que no son mensajes de chat
-        // Podría ser una variable simple, pero esta clase nos da thread-safe y la función de espera
+
         val response = responseQueue.poll(5, TimeUnit.SECONDS)
         if (response != null) {
             return response

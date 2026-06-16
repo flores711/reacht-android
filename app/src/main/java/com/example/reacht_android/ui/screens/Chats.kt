@@ -84,7 +84,7 @@ fun Chats(navController: NavController, viewModel: AppViewModel) {
                                 .padding(vertical = 6.dp)
                                 .clickable {
                                     viewModel.selectChat(chat)
-                                    navController.navigate(Screen.SingleChat.route)
+                                    navController.navigate(Screen.SingleChat.route) // Usará variable selectChat del ViewModel para saber cuál mostrar
                                 },
                             shape = RoundedCornerShape(12.dp),
                             colors = CardDefaults.cardColors(containerColor = MediumGrey)

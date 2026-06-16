@@ -104,8 +104,7 @@ fun Signup(navController: NavController, viewModel: AppViewModel) {
             colors = ButtonDefaults.buttonColors(containerColor = Blurple),
             enabled = authState !is AuthState.Loading,
             shape = RoundedCornerShape(6.dp),
-            // TODO: Por qué el padding se pone así
-            // TODO: Buscar todos estos y quitarlos si no hacen falta
+            // Padding por dentro, de bordes de componente hacia dentro
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
         ) {
             Text(
